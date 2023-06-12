@@ -1,6 +1,6 @@
 //==============================================================================
 //
-// 	sensor_epsonG365PDF0.h - Epson G365PDF0 sensor specific definitions
+// 	sensor_epsonG370PDT0.h - Epson G370PDT0 sensor specific definitions
 //
 //
 //  THE SOFTWARE IS RELEASED INTO THE PUBLIC DOMAIN.
@@ -12,13 +12,17 @@
 //  SOFTWARE.
 //
 //==============================================================================
-#ifndef EPSONG365PDF0_H_
-#define EPSONG365PDF0_H_
+#pragma once
 
-#define EPSON_ACCL_SF (.400)
-#define EPSON_GYRO_SF (.0151515)
-#define EPSON_TEMP_SF (-0.0037918)
-#define EPSON_ATTI_SF (0.00699411)
+#ifdef ACCL_RANGE_16G
+#define EPSON_ACCL_SF (.5000)  // 16G
+#else
+#define EPSON_ACCL_SF (.2500)  // 8G
+#endif                         // ACCL_RANGE_16G
+
+#define EPSON_GYRO_SF (.006666667)
+#define EPSON_TEMP_SF (0.00390625)
+#define EPSON_ATTI_SF (0.0)
 #define EPSON_COUNT_SF (16000)
 
 #define EPSON_DA_SF0 (EPSON_GYRO_SF * 500E-06)
@@ -55,33 +59,35 @@
 #define EPSON_DV_SF14 (EPSON_DV_SF13 * 2)
 #define EPSON_DV_SF15 (EPSON_DV_SF14 * 2)
 
-/*                                      -- Commands --
-    - ADDR_ address byte of transfer to select the register to access
-    - CMD_  data byte of transfer to write to the register selected
-     
+/*                   -- Commands --
+- ADDR_ address byte of transfer to select the register to access
+- CMD_  data byte of transfer to write to the register selected
 
-    - All accesses are 16 bit transfers
-    - For SPI IF:
+- All accesses are 16 bit transfers
+- For SPI IF:
         - For SPI write accesses - 8-bit address with msb=1b (can be even or
-   odd) + 8-bit write data
-                                 - No response
-        - For SPI read accesses - 8-bit address with msb=0b(even only) + 8-bit
-   dummy data
-                                - Response is transferred on MOSI on next SPI
-   access
-                                - Return value is 16-bit read data (high byte +
-   low byte)
-    - For UART IF:
+                                                           odd) + 8-bit write
+data
+                                                         - No response
+        - For SPI read accesses  - 8-bit address with msb=0b(even only) + 8-bit
+                                                           dummy data
+                                                         - Response is
+transferred on MOSI on next SPI access
+                                                         - Return value is
+16-bit read data (high byte + low byte)
+- For UART IF:
         - For UART write accesses - 8-bit address with msb=1b(can be even or
-   odd) + 8-bit write data + Delimiter Byte
-                                  - No response
-        - For UART read accesses - 8-bit address with msb=0b(even only) + 8-bit
-   dummy data + Delimiter Byte
-                                 - Response is transferred immediately
-                                 - Return value consists of Register Read
-   Address + 16-bit read data (high byte + low byte) + Delimiter Byte
-    
-    - NOTE: Register Address Maps that depend on the WINDOW_ID (page) */
+                                odd) + 8-bit write data + Delimiter Byte
+                                                          - No response
+        - For UART read accesses  - 8-bit address with msb=0b(even only) + 8-bit
+                                dummy data + Delimiter Byte
+                                                          - Response is
+transferred immediately
+                                                          - Return value
+consists of Register Read Address + 16-bit read data (high byte + low byte) +
+Delimiter Byte
+
+- NOTE: Register Address Maps that depend on the WINDOW_ID (page) */
 
 // WINDOW_ID 0
 #define ADDR_MODE_CTRL_LO 0x02  // MODE_CTRL Byte0 (W0)
@@ -106,21 +112,7 @@
 #define ADDR_ZACCL_HIGH 0x26    // ZACCL HIGH (W0)
 #define ADDR_ZACCL_LOW 0x28     // ZACCL LOW  (W0)
 
-#define ADDR_QTN0_HIGH 0x50  // QTN0 HIGH (W0)
-#define ADDR_QTN0_LOW 0x52   // QTN0 LOW  (W0)
-#define ADDR_QTN1_HIGH 0x54  // QTN1 HIGH (W0)
-#define ADDR_QTN1_LOW 0x56   // QTN1 LOW  (W0)
-#define ADDR_QTN2_HIGH 0x58  // QTN2 HIGH (W0)
-#define ADDR_QTN2_LOW 0x5A   // QTN2 LOW  (W0)
-#define ADDR_QTN3_HIGH 0x5C  // QTN3 HIGH (W0)
-#define ADDR_QTN3_LOW 0x5E   // QTN3 LOW  (W0)
-
-#define ADDR_ROLL_HIGH 0x64   // ROLL HIGH (W0)
-#define ADDR_ROLL_LOW 0x66    // ROLL LOW  (W0)
-#define ADDR_PITCH_HIGH 0x68  // PITCH HIGH (W0)
-#define ADDR_PITCH_LOW 0x6A   // PITCH LOW  (W0)
-#define ADDR_YAW_HIGH 0x6C    // YAW HIGH (W0)
-#define ADDR_YAW_LOW 0x6E     // YAW LOW  (W0)
+#define ADDR_ID 0x4C  // ID LOW  (W0)
 
 #define ADDR_XDLTA_HIGH 0x64  // XDLTA HIGH (W0)
 #define ADDR_XDLTA_LOW 0x66   // XDLTA LOW  (W0)
@@ -160,46 +152,25 @@
 #define ADDR_ATTI_CTRL_HI 0x15    // ATTI_CTRL Byte1 (W1)
 #define ADDR_GLOB_CMD2_LO 0x16    // ATTI_GLOB_CMD2 Byte0 (W1)
 #define ADDR_GLOB_CMD2_HI 0x17    // ATTI_GLOB_CMD2 Byte1 (W1)
-#define ADDR_EXT_SYNC_CTRL_LO 0x18     // EXT_SYNC_CTRL Byte0 (W1)
-#define ADDR_EXT_SYNC_CTRL_HI 0x19     // EXT_SYNC_CTRL Byte1 (W1)
 
-#define R_MATRIX_G_M11_LO 0x38  // R_MATRIX_G_M11 Byte0 (W1)
-#define R_MATRIX_G_M11_HI 0x39  // R_MATRIX_G_M11 Byte1 (W1)
-#define R_MATRIX_G_M12_LO 0x3A  // R_MATRIX_G_M12 Byte0 (W1)
-#define R_MATRIX_G_M12_HI 0x3B  // R_MATRIX_G_M12 Byte1 (W1)
-#define R_MATRIX_G_M13_LO 0x3C  // R_MATRIX_G_M13 Byte0 (W1)
-#define R_MATRIX_G_M13_HI 0x3D  // R_MATRIX_G_M13 Byte1 (W1)
-#define R_MATRIX_G_M21_LO 0x3E  // R_MATRIX_G_M21 Byte0 (W1)
-#define R_MATRIX_G_M21_HI 0x3F  // R_MATRIX_G_M21 Byte1 (W1)
-#define R_MATRIX_G_M22_LO 0x40  // R_MATRIX_G_M22 Byte0 (W1)
-#define R_MATRIX_G_M22_HI 0x41  // R_MATRIX_G_M22 Byte1 (W1)
-#define R_MATRIX_G_M23_LO 0x42  // R_MATRIX_G_M23 Byte0 (W1)
-#define R_MATRIX_G_M23_HI 0x43  // R_MATRIX_G_M23 Byte1 (W1)
-#define R_MATRIX_G_M31_LO 0x44  // R_MATRIX_G_M31 Byte0 (W1)
-#define R_MATRIX_G_M31_HI 0x45  // R_MATRIX_G_M31 Byte1 (W1)
-#define R_MATRIX_G_M32_LO 0x46  // R_MATRIX_G_M32 Byte0 (W1)
-#define R_MATRIX_G_M32_HI 0x47  // R_MATRIX_G_M32 Byte1 (W1)
-#define R_MATRIX_G_M33_LO 0x48  // R_MATRIX_G_M33 Byte0 (W1)
-#define R_MATRIX_G_M33_HI 0x49  // R_MATRIX_G_M33 Byte1 (W1)
-
-#define R_MATRIX_A_M11_LO 0x4A  // R_MATRIX_A_M11 Byte0 (W1)
-#define R_MATRIX_A_M11_HI 0x4B  // R_MATRIX_A_M11 Byte1 (W1)
-#define R_MATRIX_A_M12_LO 0x4C  // R_MATRIX_A_M12 Byte0 (W1)
-#define R_MATRIX_A_M12_HI 0x4D  // R_MATRIX_A_M12 Byte1 (W1)
-#define R_MATRIX_A_M13_LO 0x4E  // R_MATRIX_A_M13 Byte0 (W1)
-#define R_MATRIX_A_M13_HI 0x4F  // R_MATRIX_A_M13 Byte1 (W1)
-#define R_MATRIX_A_M21_LO 0x50  // R_MATRIX_A_M21 Byte0 (W1)
-#define R_MATRIX_A_M21_HI 0x51  // R_MATRIX_A_M21 Byte1 (W1)
-#define R_MATRIX_A_M22_LO 0x52  // R_MATRIX_A_M22 Byte0 (W1)
-#define R_MATRIX_A_M22_HI 0x53  // R_MATRIX_A_M22 Byte1 (W1)
-#define R_MATRIX_A_M23_LO 0x54  // R_MATRIX_A_M23 Byte0 (W1)
-#define R_MATRIX_A_M23_HI 0x55  // R_MATRIX_A_M23 Byte1 (W1)
-#define R_MATRIX_A_M31_LO 0x56  // R_MATRIX_A_M31 Byte0 (W1)
-#define R_MATRIX_A_M31_HI 0x57  // R_MATRIX_A_M31 Byte1 (W1)
-#define R_MATRIX_A_M32_LO 0x58  // R_MATRIX_A_M32 Byte0 (W1)
-#define R_MATRIX_A_M32_HI 0x59  // R_MATRIX_A_M32 Byte1 (W1)
-#define R_MATRIX_A_M33_LO 0x5A  // R_MATRIX_A_M33 Byte0 (W1)
-#define R_MATRIX_A_M33_HI 0x5B  // R_MATRIX_A_M33 Byte1 (W1)
+#define R_MATRIX_M11_LO 0x38  // R_MATRIX_M11 Byte0 (W1)
+#define R_MATRIX_M11_HI 0x39  // R_MATRIX_M11 Byte1 (W1)
+#define R_MATRIX_M12_LO 0x3A  // R_MATRIX_M12 Byte0 (W1)
+#define R_MATRIX_M12_HI 0x3B  // R_MATRIX_M12 Byte1 (W1)
+#define R_MATRIX_M13_LO 0x3C  // R_MATRIX_M13 Byte0 (W1)
+#define R_MATRIX_M13_HI 0x3D  // R_MATRIX_M13 Byte1 (W1)
+#define R_MATRIX_M21_LO 0x3E  // R_MATRIX_M21 Byte0 (W1)
+#define R_MATRIX_M21_HI 0x3F  // R_MATRIX_M21 Byte1 (W1)
+#define R_MATRIX_M22_LO 0x40  // R_MATRIX_M22 Byte0 (W1)
+#define R_MATRIX_M22_HI 0x41  // R_MATRIX_M22 Byte1 (W1)
+#define R_MATRIX_M23_LO 0x42  // R_MATRIX_M23 Byte0 (W1)
+#define R_MATRIX_M23_HI 0x43  // R_MATRIX_M23 Byte1 (W1)
+#define R_MATRIX_M31_LO 0x44  // R_MATRIX_M31 Byte0 (W1)
+#define R_MATRIX_M31_HI 0x45  // R_MATRIX_M31 Byte1 (W1)
+#define R_MATRIX_M32_LO 0x46  // R_MATRIX_M32 Byte0 (W1)
+#define R_MATRIX_M32_HI 0x47  // R_MATRIX_M32 Byte1 (W1)
+#define R_MATRIX_M33_LO 0x48  // R_MATRIX_M33 Byte0 (W1)
+#define R_MATRIX_M33_HI 0x49  // R_MATRIX_M33 Byte1 (W1)
 
 #define ADDR_PROD_ID1 0x6A     // PROD_ID1(W1)
 #define ADDR_PROD_ID2 0x6C     // PROD_ID2(W1)
@@ -265,9 +236,6 @@
 #define CMD_FIRTAP128FC200 0x12
 #define CMD_FIRTAP128FC400 0x13
 
-
 // MODE STAT
 #define VAL_SAMPLING_MODE 0x00
 #define VAL_CONFIG_MODE 0x04
-
-#endif /* EPSONG365PDF0_H_ */

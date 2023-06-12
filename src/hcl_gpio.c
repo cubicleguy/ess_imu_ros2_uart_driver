@@ -18,6 +18,8 @@
 //
 //==============================================================================
 
+#include <stdint.h>
+
 #include "hcl.h"
 #include "hcl_gpio.h"
 
@@ -33,7 +35,7 @@ int gpioInit(void) { return OK; }
 ** Function name:       gpioInit
 ** Description:         Release generic GPIO interface (if any)
 ** Parameters:          None
-** Return value:        OK__attribute__((unused)) or NG
+** Return value:        OK
 *****************************************************************************/
 int gpioRelease(void) { return OK; }
 

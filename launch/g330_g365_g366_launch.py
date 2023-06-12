@@ -1,4 +1,4 @@
-"""Launch file for Epson G370PDF1, G370PDS0, G370PDG0, G370PDT0 imu_node for ess_imu_ros2_uart_driver package"""
+"""Launch file for Epson G330PDG0, G365PDx1, G366PDG0 imu_node for ess_imu_ros2_uart_driver package"""
 
 from launch import LaunchDescription
 import launch_ros.actions
@@ -21,7 +21,7 @@ def generate_launch_description():
             ),
             DeclareLaunchArgument(
                 name="imu_topic",
-                default_value="/epson_imu/data_raw",
+                default_value="/epson_imu/data",
                 description="topic name for publishing imu messages.",
             ),
             DeclareLaunchArgument(
@@ -74,8 +74,22 @@ def generate_launch_description():
                 # 17: KAISER TAP128 Fc=100 Hz
                 # 18: KAISER TAP128 Fc=200 Hz
                 # 19: KAISER TAP128 Fc=400 Hz
-                default_value="6",
+                default_value="5",
                 description="Sets the IMU filter",
+            ),
+            DeclareLaunchArgument(
+                name="quaternion_output_en",
+                default_value="1",
+                description="Enables quaternion outputs",
+            ),
+            DeclareLaunchArgument(
+                name="atti_profile",
+                # value: attitude motion profile
+                # 0: modeA (standard)
+                # 1: modeB (vehicle/high)
+                # 2: modeC (construction/low)
+                default_value="0",
+                description="Sets the attitude motion profile",
             ),
             DeclareLaunchArgument(
                 name="output_32bit_en",
@@ -105,6 +119,10 @@ def generate_launch_description():
                         "burst_polling_rate": LaunchConfiguration("burst_polling_rate"),
                         "imu_dout_rate": LaunchConfiguration("imu_dout_rate"),
                         "imu_filter_sel": LaunchConfiguration("imu_filter_sel"),
+                        "quaternion_output_en": LaunchConfiguration(
+                            "quaternion_output_en"
+                        ),
+                        "atti_profile": LaunchConfiguration("atti_profile"),
                         "output_32bit_en": LaunchConfiguration("output_32bit_en"),
                         "time_correction_en": LaunchConfiguration("time_correction_en"),
                         "ext_trigger_en": LaunchConfiguration("ext_trigger_en"),

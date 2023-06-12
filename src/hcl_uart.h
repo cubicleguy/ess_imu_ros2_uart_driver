@@ -13,15 +13,20 @@
 //  SOFTWARE.
 //
 //==============================================================================
-#ifndef HCL_UART_H_
-#define HCL_UART_H_
+
+#pragma once
 
 // Common supported BAUD rates.
-// Only G365/G370/G325 can support 921600 baud.
-// 921600 baud may not be supported on all host hardware platforms.
+// Only G330PDG0/G365PDF1/G366PDG0/G370PDF1/G370PDS0/G370PDG0/G370PDT0 can
+// support 921600 baud. 921600 baud may not be supported on all host hardware
+// platforms.
 #define BAUD_921600 921600
 #define BAUD_460800 460800
 #define BAUD_230400 230400
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 // Prototypes for generic UART functions
 int uartInit(const char* comPortPath, int baudrate);
@@ -31,4 +36,6 @@ int writeComPort(int comPort, unsigned char* bytesToWrite, int size);
 int numBytesReadComPort(int comPort);
 int purgeComPort(int comPort);
 
-#endif /* HCL_UART_H_ */
+#ifdef __cplusplus
+}
+#endif

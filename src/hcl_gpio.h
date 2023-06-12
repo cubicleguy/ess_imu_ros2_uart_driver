@@ -13,8 +13,18 @@
 //
 //==============================================================================
 
-#ifndef HCL_GPIO_H_
-#define HCL_GPIO_H_
+#pragma once
+
+#include <stdint.h>
+
+// Dummy pin assignments if below signal are not connected to anything
+#define EPSON_RESET 0
+#define EPSON_DRDY 0
+#define EPSON_CS 0
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 // Prototypes for generic GPIO functions
 int gpioInit(void);
@@ -24,9 +34,6 @@ void gpioSet(uint8_t pin);
 void gpioClr(uint8_t pin);
 uint8_t gpioGetPinLevel(uint8_t pin);
 
-// Dummy assignments if below signal are not connected to anything
-#define EPSON_RESET 0
-#define EPSON_DRDY 0
-#define EPSON_CS 0
-
+#ifdef __cplusplus
+}
 #endif
